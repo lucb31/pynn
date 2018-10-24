@@ -1,5 +1,6 @@
 from lib import Network
 import mnist
+import cProfile
 
 # Initializing network
 my_network = Network()
@@ -20,16 +21,27 @@ for i in range(0,10):
 
 epsilon = 0.01
 
-train_images = [train_images[0]]
-train_labels = [train_labels[0]]
+"""
+#shrink training data for debug purposes, DEBUG REMOVE
+safe_images = train_images
+safe_labels = train_labels
+train_images = []
+train_labels = []
+for i in range(0, 10):
+    train_images.append(safe_images[i])
+    train_labels.append(safe_labels[i])
+"""
 
-iteration = 0
-while True:
+def iterate():
     print ("Starting learn iteration %s:" % iteration)
     for i, image in enumerate(train_images):
-        shoulds = default_shoulds
-        shoulds[train_labels[i]] = 1
-
+        print("image %s"%i)
+        shoulds = []
+        for index in range(0,10):
+            if train_labels[i] == index:
+                shoulds.append(1)
+            else:
+                shoulds.append(0)
         # Fill shoulds with train labels
         # for index in range(0,10):
         #     shoulds.append(0)
@@ -37,10 +49,16 @@ while True:
         #         shoulds[index] = 1
 
         # Fill inputs with train data
+
         my_network.read_mnist_image(image)
+        # cProfile.run('my_network.delta_learning(shoulds, epsilon)')
         my_network.delta_learning(shoulds, epsilon)
-        print(i)
     print ("Finished iteration %s" % iteration)
+
+iteration = 0
+max_iterations = 1
+while iteration < max_iterations:
+    cProfile.run('iterate()')
     iteration += 1
 
 """

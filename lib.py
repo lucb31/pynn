@@ -1,4 +1,5 @@
 import random
+import cProfile
 
 class Connection(object):
     def __init__(self, neuron, weight):
@@ -112,16 +113,14 @@ class Network(object):
                 output_neuron.create_connection(input_neuron, weights[o][i])
 
     def delta_learning(self, shoulds = [], epsilon = 0.01):
-        # print("Delta learning iteration: ")
         if len(shoulds) < len(self.output_neurons):
             print ("not enough data provided")
             return
         for o, output_neuron in enumerate(self.output_neurons):
             should = shoulds[o]
             small_delta = output_neuron.get_derivated_value() * (should - output_neuron.get_value())
-            print("pre") #DEBUG
+            # cProfile.runctx('output_neuron.delta_learning(small_delta, epsilon)', globals(), locals())
             output_neuron.delta_learning(small_delta, epsilon)
-            print("after") #DEBUG
 
     def create_mnist_network(self):
         """Initializing a 28x28 input neuron matrix with 10 output neurons"""
